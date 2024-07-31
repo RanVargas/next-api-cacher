@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - dbdata6:/data/db
+    networks:
+      - bridge
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/mydatabase
+      - API_KEY=b92189884ce200d55d403ccfe68f98f4
+      - API_URL=http://testapi.swisshalley.com/hotels/
+    networks:
+      - bridge
+
+volumes:
+  dbdata6:
+
+networks:
+  bridge:
+    driver: bridge
