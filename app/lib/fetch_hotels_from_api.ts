@@ -7,25 +7,41 @@ const API_URL = process.env.API_URL;
 
 export async function fetchHotelsFromAPI(): Promise<HotelType[]> {
   try {
-    if (!API_KEY || !API_URL || API_KEY == undefined || API_URL == undefined) {
-        console.error("No api key or url found");
-        throw new Error("No api key or url could be loaded")
-        
+    if (API_URL == undefined || API_KEY == undefined) {
+      
     }
-    const responseV2 = await fetch(API_URL, {
-        headers: {
-          'x-api-key': API_KEY,
-        },
-      });
-    let unprocessedJson = await responseV2.json;
-    const arrays = transformToHotels(unprocessedJson);
-    return arrays;
+    const response = await axios.get(API_URL!, {headers: {'X-API-KEY':API_KEY}});
+    
+    if (response.status !== 200) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const data = response.data;
+
+    // Process and transform the API data to match the Hotel type
+    const hotels: HotelType[] = data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      price: parseFloat(item.price),
+      source: item.source || 'Unknown',
+      country_id: item.country_id,
+      country: item.country,
+      city_id: item.city_id,
+      city: item.city,
+      zip: parseInt(item.zip, 10),
+      address: item.address,
+      latitude: parseFloat(item.latitude),
+      longitude: parseFloat(item.longitude),
+      star: parseInt(item.star, 10),
+      image: item.image_url || ''
+    }));
+
+    return hotels;
   } catch (error) {
     console.error('Error fetching hotels from API:', error);
-    throw new Error('Failed to fetch hotels from API');
+    throw error;
   }
 }
-
 function transformToHotels(data: any): HotelType[] {
     return data.map((item: any) => ({
       id: item.id,

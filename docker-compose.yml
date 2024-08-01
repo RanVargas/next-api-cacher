@@ -10,7 +10,12 @@ services:
     networks:
       - bridge
   app:
-    build: .
+    build:
+      context: .
+      args:
+        MONGODB_URI: mongodb://mongodb:27017/mydatabase
+        API_KEY: b92189884ce200d55d403ccfe68f98f4
+        API_URL: http://testapi.swisshalley.com/hotels/
     ports:
       - 3000:3000
     environment:

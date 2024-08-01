@@ -1,36 +1,29 @@
-import Image from "next/image";
 import { Hotel, Columns } from "./components/Hotel/table_columns";
-import { Hotel_Table } from "./components/Hotel/hotel_table";
-import {getHotels, addHotels, fetchAndCacheHotels} from './lib/api_caller'
+import { HotelTableWrapper } from "./hotels_list";
 
-async function getData(): Promise<Hotel[]> {
+async function getHotels(): Promise<Hotel[]> {
   try {
-    let hotels = await getHotels();
-    if (hotels.length > 0 && hotels) {
-      return hotels;
+    const response = await fetch("/api/fetch_and_cache_hotels", {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch hotels");
     }
+    return response.json();
   } catch (error) {
-    console.log(error)
+    console.error("Error fetching hotels:", error);
+    return [];
   }
-  let hotels = await fetchAndCacheHotels();
-
- 
-  if (!hotels) {
-    // This will activate the closest `error.js` Error Boundary
-    console.log(hotels);
-  }
- 
-  return hotels
 }
 
 export default async function Home() {
-  const data = await getData();
+  const data = await getHotels();
 
   return (
     <main className="">
       <div className="container mx-auto py-10">
-      <Hotel_Table columns={Columns} data={data} />
-    </div>
+        <HotelTableWrapper initialData={data} />
+      </div>
     </main>
   );
 }

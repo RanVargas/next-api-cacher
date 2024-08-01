@@ -1,11 +1,15 @@
-"use client"
+"use client";
 
+import React from "react";
+import Image from "next/image";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  useReactTable
-} from "@tanstack/react-table"
+  useReactTable,
+  getSortedRowModel,
+  SortingState,
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -13,24 +17,34 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table"
+  TableRow,
+} from "@/components/ui/table";
 
-interface DataTableProps<TData, TValue>{
-  columns: ColumnDef<TData, TValue>[],
-  data: TData[]
+import { Button } from "@/components/ui/button";
+
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function Hotel_Table<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  console.log("Hotel_Table received data:", data);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
- 
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+  });
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -40,14 +54,23 @@ export function Hotel_Table<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                    {header.isPlaceholder ? null : (
+                      <Button
+                        variant="ghost"
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </Button>
+                    )}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
@@ -61,7 +84,21 @@ export function Hotel_Table<TData, TValue>({
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {cell.column.id === "image" ? (
+                      <Image
+                        src={cell.getValue() as string}
+                        alt={`${row.getValue("name")} hotel`}
+                        width={100}
+                        height={100}
+                        className="object-cover rounded-md"
+                      />
+                    ) : cell.column.id === "star" ? (
+                      "⭐".repeat(cell.getValue() as number)
+                    ) : cell.column.id === "price" ? (
+                      `$${(cell.getValue() as number).toFixed(2)}`
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
@@ -76,5 +113,5 @@ export function Hotel_Table<TData, TValue>({
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
