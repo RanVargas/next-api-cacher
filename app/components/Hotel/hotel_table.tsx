@@ -35,14 +35,7 @@ export function Hotel_Table<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  let counter = 0;
-  /*const processed = data.map((hotel: any) => {
-    console.log(`This is the image: ${hotel} + ${hotel.Image}+ ${hotel.image}+ ${hotel.price}+ ${hotel.address}`);
-    if (counter < 10) {
-      counter++;
-    }
-    
-  })*/
+  
 
   const table = useReactTable({
     data,

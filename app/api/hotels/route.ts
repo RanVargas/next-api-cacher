@@ -7,14 +7,7 @@ import { json } from 'stream/consumers';
 export async function GET(request: Request) {
   const API_KEY = process.env.API_KEY; 
   const API_URL = process.env.API_URL;
-  /*try {
-    const cachedHotels: Hotel[] = await axios.get("/api/hotels");
-    if (cachedHotels != undefined) {
-      return cachedHotels;
-    }
-  } catch (error) {
-    console.log("No hotels in cache");
-  }*/
+  
 
 
   if (!API_URL || !API_KEY) {
@@ -36,32 +29,14 @@ export async function GET(request: Request) {
     const data = await response.json();
     const hotels =  transformToHotels(data.data.hotels);
     
-    //await saveHotelsToDb(hotels);
-    //await axios.post(`api/add_hotels`, hotels);
-    //await fetch("/api/save_hotels", )
-    console.log(hotels)
+   
     return NextResponse.json(hotels);
   } catch (error) {
     console.error('Error fetching hotels:', error);
     throw error;
   }
 
-  /*try {
-    const body = await request.json();
-    const hotels: Hotel[] = body.hotels;
 
-    if (!Array.isArray(hotels) || hotels.length === 0) {
-      return NextResponse.json({ error: 'Invalid input. Expected an array of hotels.' }, { status: 400 });
-    }
-
-    await dbConnect();
-    await saveHotelsToDb(hotels);
-
-    return NextResponse.json({  }, { status: 201 });
-  } catch (error) {
-    console.error('Error saving hotels:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }*/
 }
 
 function transformToHotels(data: any): Hotel[] {
@@ -90,12 +65,3 @@ function transformToHotels(data: any): Hotel[] {
   }));
 }
 
-/*export async function GET() {
-  try {
-    const hotels = await getHotelsWithCache();
-    return NextResponse.json(hotels);
-  } catch (error) {
-    console.error('Error fetching hotels:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}*/

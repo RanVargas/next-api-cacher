@@ -16,7 +16,7 @@ export async function fetchHotelsFromAPI(): Promise<HotelType[]> {
       let response: Response;
       response = await fetch(API_URL!, {
         headers: { 'X-API-KEY': API_KEY! },
-        cache: 'no-store'
+        cache: 'force-cache'
       });
       
   
@@ -45,11 +45,8 @@ export async function fetchHotelsFromAPI(): Promise<HotelType[]> {
       image: item.image || ''
       
     }));
-    connectToDatabase();
-    const resp = await Hotel.insertMany(hotels);
-    console.log(resp);
-
-    //console.log(hotels[0]);
+    //connectToDatabase();
+    
     return hotels;
   } catch (error) {
     console.error('Error fetching hotels:', error);
