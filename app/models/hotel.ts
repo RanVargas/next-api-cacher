@@ -6,20 +6,20 @@ import { Hotel as HotelType } from '../components/Hotel/table_columns';
 type HotelDocument = HotelType & Document;
 
 const HotelSchema: Schema<HotelDocument> = new Schema({
-  id: { type: Number, required: true, unique: true },
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  source: { type: String, required: true },
-  country_id: { type: Number, required: true },
-  country: { type: String, required: true },
-  city_id: { type: Number, required: true },
-  city: { type: String, required: true },
-  zip: { type: Number, required: true },
-  address: { type: String, required: true },
-  latitude: { type: Number, required: true },
-  longitude: { type: Number, required: true },
-  star: { type: Number, required: true },
-  image: { type: String, required: true }
+  id: { type: Number, required: false, unique: true },
+  name: { type: String, required: false },
+  price: { type: Number, required: false },
+  source: { type: String, required: false },
+  country_id: { type: Number, required: false },
+  country: { type: String, required: false },
+  city_id: { type: Number, required: false },
+  city: { type: String, required: false },
+  zip: { type: String, required: false },
+  address: { type: String, required: false },
+  latitude: { type: Number, required: false },
+  longitude: { type: Number, required: false },
+  star: { type: Number, required: false },
+  image: { type: String, required: false }
 });
 
 const Hotel: Model<HotelDocument> = mongoose.models.Hotel || mongoose.model<HotelDocument>('Hotel', HotelSchema);

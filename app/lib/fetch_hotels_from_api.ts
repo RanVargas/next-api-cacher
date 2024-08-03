@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { Hotel as HotelType } from '../components/Hotel/table_columns';
+import Hotel from '../models/hotel';
+import connectToDatabase from './mongoose';
 
 
 const API_KEY = process.env.API_KEY; 
@@ -10,16 +12,23 @@ export async function fetchHotelsFromAPI(): Promise<HotelType[]> {
     if (API_URL == undefined || API_KEY == undefined) {
       
     }
-    const response = await axios.get(API_URL!, {headers: {'X-API-KEY':API_KEY}});
-    
-    if (response.status !== 200) {
-      throw new Error(`API request failed with status ${response.status}`);
-    }
-
-    const data = response.data;
-
+    try {
+      let response: Response;
+      response = await fetch(API_URL!, {
+        headers: { 'X-API-KEY': API_KEY! },
+        cache: 'no-store'
+      });
+      
+  
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+  
+      const data = await response.json();
     // Process and transform the API data to match the Hotel type
-    const hotels: HotelType[] = data.map((item: any) => ({
+    const hotels: HotelType[] = data.data.hotels.map((item: any) => (
+      
+      {
       id: item.id,
       name: item.name,
       price: parseFloat(item.price),
@@ -28,15 +37,27 @@ export async function fetchHotelsFromAPI(): Promise<HotelType[]> {
       country: item.country,
       city_id: item.city_id,
       city: item.city,
-      zip: parseInt(item.zip, 10),
+      zip: item.zip,
       address: item.address,
       latitude: parseFloat(item.latitude),
       longitude: parseFloat(item.longitude),
       star: parseInt(item.star, 10),
-      image: item.image_url || ''
+      image: item.image || ''
+      
     }));
+    connectToDatabase();
+    const resp = await Hotel.insertMany(hotels);
+    console.log(resp);
 
+    //console.log(hotels[0]);
     return hotels;
+  } catch (error) {
+    console.error('Error fetching hotels:', error);
+    throw error;
+  }
+
+
+    
   } catch (error) {
     console.error('Error fetching hotels from API:', error);
     throw error;

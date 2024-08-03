@@ -21,18 +21,28 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
+import { Hotel } from "./table_columns";
+
+
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
 }
 
 export function Hotel_Table<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  console.log("Hotel_Table received data:", data);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  let counter = 0;
+  /*const processed = data.map((hotel: any) => {
+    console.log(`This is the image: ${hotel} + ${hotel.Image}+ ${hotel.image}+ ${hotel.price}+ ${hotel.address}`);
+    if (counter < 10) {
+      counter++;
+    }
+    
+  })*/
 
   const table = useReactTable({
     data,
@@ -43,8 +53,8 @@ export function Hotel_Table<TData, TValue>({
     state: {
       sorting,
     },
-  });
-
+  })
+ 
   return (
     <div className="rounded-md border">
       <Table>
@@ -70,7 +80,7 @@ export function Hotel_Table<TData, TValue>({
                       </Button>
                     )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -105,7 +115,7 @@ export function Hotel_Table<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-full text-center">
                 No results.
               </TableCell>
             </TableRow>
@@ -113,5 +123,5 @@ export function Hotel_Table<TData, TValue>({
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

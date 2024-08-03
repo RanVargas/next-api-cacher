@@ -9,7 +9,7 @@ export type Hotel = {
   country: string;
   city_id: number;
   city: string;
-  zip: number;
+  zip: string;
   address: string;
   latitude: number;
   longitude: number;
